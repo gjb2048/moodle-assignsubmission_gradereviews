@@ -148,11 +148,11 @@ function assignsubmission_gradereviews_comment_display($gradereviews, $options) 
                 $gradereviewer->imagealt = $guestuser->imagealt;
 
                 // Temporarily store blind-marking information for use in later gradereviews if necessary.
+                $usermappings[$gradereview->userid] = new stdClass();
                 $usermappings[$gradereview->userid]->fullname = fullname($gradereviewer);
                 $usermappings[$gradereview->userid]->avatar = $assignment->get_renderer()->user_picture($gradereviewer,
                         array('size' => 18, 'link' => false));
             }
-            
             // Commenting these three next lines, the grade reviewer name should not be hidden even in blind marking.
             // Set blind-marking information for this gradereview.
             // $gradereview->fullname = $usermappings[$gradereview->userid]->fullname;
