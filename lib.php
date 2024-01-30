@@ -147,6 +147,11 @@ function assignsubmission_gradereviews_comment_display($gradereviews, $options) 
                 $gradereviewer->email = $guestuser->email;
                 $gradereviewer->imagealt = $guestuser->imagealt;
 
+                // Initialize $usermappings[$gradereview->userid] as an object if it's not already set.
+                if (!isset($usermappings[$gradereview->userid])) {
+                    $usermappings[$gradereview->userid] = new stdClass();
+                }
+
                 // Temporarily store blind-marking information for use in later gradereviews if necessary.
                 $usermappings[$gradereview->userid]->fullname = fullname($gradereviewer);
                 $usermappings[$gradereview->userid]->avatar = $assignment->get_renderer()->user_picture($gradereviewer,
