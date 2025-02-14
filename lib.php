@@ -43,7 +43,10 @@ function assignsubmission_gradereviews_comment_validate(stdClass $options) {
     $context = $options->context;
 
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
-    $assignment = new assign($context, null, null);
+    static $assignment = null;
+    if (is_null($assignment) || $assignment->get_context() != $context) {
+        $assignment = new assign($context, null, null);
+    }
 
     if ($assignment->get_instance()->id != $submission->assignment) {
         throw new comment_exception('invalidcontext');
@@ -80,7 +83,10 @@ function assignsubmission_gradereviews_comment_permissions(stdClass $options) {
     $context = $options->context;
 
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
-    $assignment = new assign($context, null, null);
+    static $assignment = null;
+    if (is_null($assignment) || $assignment->get_context() != $context) {
+        $assignment = new assign($context, null, null);
+    }
 
     if ($assignment->get_instance()->id != $submission->assignment) {
         throw new comment_exception('invalidcontext');
@@ -129,35 +135,58 @@ function assignsubmission_gradereviews_comment_display($gradereviews, $options) 
     }
 
     if ($assignment->is_blind_marking() && !empty($gradereviews)) {
-        // Blind marking is being used, may need to map unique anonymous ids to the gradereviews.
-        $usermappings = array();
-        $hiddenuserstr = trim(get_string('hiddenuser', 'assign'));
+        // Blind marking is being used, may need to map unique anonymous ids to the comments.
+        $usermappings = [];
         $guestuser = guest_user();
 
-        foreach ($gradereviews as $gradereview) {
-            // Anonymize the gradereviews.
-            if (empty($usermappings[$gradereview->userid])) {
-                // The blind-marking information for this gradereviewer has not been generated; do so now.
-                $anonid = $assignment->get_uniqueid_for_user($gradereview->userid);
-                $gradereviewer = new stdClass();
-                $gradereviewer->firstname = $hiddenuserstr;
-                $gradereviewer->lastname = $anonid;
-                $gradereviewer->picture = 0;
-                $gradereviewer->id = $guestuser->id;
-                $gradereviewer->email = $guestuser->email;
-                $gradereviewer->imagealt = $guestuser->imagealt;
+        // Check group users first.
+        $userinteam = false;
+        if ($assignment->get_instance()->teamsubmission && has_capability('mod/assign:submit', $context)) {
+            $assignment->set_course(get_course($course));
+            $userinteam = $assignment->can_edit_group_submission($submission->groupid);
+        }
 
-                // Temporarily store blind-marking information for use in later gradereviews if necessary.
-                $usermappings[$gradereview->userid]->fullname = fullname($gradereviewer);
-                $usermappings[$gradereview->userid]->avatar = $assignment->get_renderer()->user_picture($gradereviewer,
-                        array('size' => 18, 'link' => false));
+        foreach ($gradereviews as $gradereview) {
+
+            if (has_capability('mod/assign:viewblinddetails', $context) && $USER->id != $gradereview->userid) {
+                $anonid = $assignment->get_uniqueid_for_user($gradereview->userid);
+                // Show participant information and the user's full name to users with the view blind details capability.
+                $a = new stdClass();
+                $a->participantnumber = $anonid;
+                $a->participantfullname = $gradereview->fullname;
+                $gradereview->fullname = get_string('blindmarkingviewfullname', 'assignsubmission_gradereviews', $a);
+            } else if ($USER->id == $gradereview->userid || $submission->userid == $USER->id || $userinteam) { // phpcs:ignore
+                // Do not anonymize the user details for this gradereview.
+            } else {
+                // Anonymize the comments.
+                if (empty($usermappings[$gradereview->userid])) {
+                    $anonid = $assignment->get_uniqueid_for_user($gradereview->userid);
+                    // The blind-marking information for this gradereviewer has not been generated; do so now.
+                    $gradereviewer = new stdClass();
+                    $gradereviewer->firstname = get_string('blindmarkingname', 'assignsubmission_gradereviews', $anonid);
+                    $gradereviewer->lastname = '';
+                    $gradereviewer->firstnamephonetic = '';
+                    $gradereviewer->lastnamephonetic = '';
+                    $gradereviewer->middlename = '';
+                    $gradereviewer->alternatename = '';
+                    $gradereviewer->picture = 0;
+                    $gradereviewer->id = $guestuser->id;
+                    $gradereviewer->email = $guestuser->email;
+                    $gradereviewer->imagealt = $guestuser->imagealt;
+
+                    // Temporarily store blind-marking information for use in later comments if necessary.
+                    $usermappings[$gradereview->userid] = new stdClass();
+                    $usermappings[$gradereview->userid]->fullname = fullname($gradereviewer);
+                    $usermappings[$gradereview->userid]->avatar = $assignment->get_renderer()->user_picture($gradereviewer,
+                            array('size' => 18, 'link' => false));
+                }
+
+                // Commenting these three next lines, the grade reviewer name should not be hidden even in blind marking.
+                // Set blind-marking information for this comment.
+                //$gradereview->fullname = $usermappings[$comment->userid]->fullname;
+                //$gradereview->avatar = $usermappings[$comment->userid]->avatar;
+                //$gradereview->profileurl = null;
             }
-            
-            // Commenting these three next lines, the grade reviewer name should not be hidden even in blind marking.
-            // Set blind-marking information for this gradereview.
-            // $gradereview->fullname = $usermappings[$gradereview->userid]->fullname;
-            // $gradereview->avatar = $usermappings[$gradereview->userid]->avatar;
-            // $gradereview->profileurl = null;
         }
     }
 
