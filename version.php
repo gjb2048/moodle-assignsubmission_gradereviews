@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version = 2025021400;
-$plugin->requires = 2024100700.00; // 4.5 (Build: 20241007).
-$plugin->supported = [405, 405];
+$plugin->requires = 2022112800.00; // 4.1 (Build: 20221128).
+$plugin->supported = [401, 405];
 $plugin->component = 'assignsubmission_gradereviews';
 $plugin->maturity = MATURITY_RC;
-$plugin->release = '405.0.1 (Build: 2025021400)';
+$plugin->release = '401.0.1 (Build: 2025021400)';
