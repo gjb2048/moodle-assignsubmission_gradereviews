@@ -55,7 +55,7 @@ class provider implements metadata_provider, assignsubmission_provider {
      * @param  collection $collection A list of information to add to.
      * @return collection Return the collection after adding to it.
      */
-    public static function _get_metadata(collection $collection) {
+    public static function get_metadata(collection $collection) : collection {
         $collection->link_subsystem('core_comment', 'privacy:metadata:commentpurpose');
         return $collection;
     }
@@ -66,7 +66,7 @@ class provider implements metadata_provider, assignsubmission_provider {
      * @param  int $userid The user ID that we are finding contexts for.
      * @param  contextlist $contextlist A context list to add sql and params to for contexts.
      */
-    public static function _get_context_for_userid_within_submission($userid, contextlist $contextlist) {
+    public static function get_context_for_userid_within_submission($userid, contextlist $contextlist) {
 
         // Add contexts where the author of the comment is the target.
         $sql = "SELECT DISTINCT c.contextid
@@ -89,7 +89,7 @@ class provider implements metadata_provider, assignsubmission_provider {
      *
      * @param  \mod_assign\privacy\useridlist $useridlist Resolved the user IDs of students.
      */
-    public static function _get_student_user_ids(\mod_assign\privacy\useridlist $useridlist) {
+    public static function get_student_user_ids(\mod_assign\privacy\useridlist $useridlist) {
         $sql = "SELECT DISTINCT asub.userid AS id
                   FROM {assign_submission} asub
                   JOIN {comments} c
@@ -102,7 +102,7 @@ class provider implements metadata_provider, assignsubmission_provider {
             'assignid' => $useridlist->get_assignid(),
             'teacherid' => $useridlist->get_teacherid(),
             'component' => 'assignsubmission_gradereviews',
-            'commentarea' => 'submission_gradereviews'
+            'commentarea' => 'submission_gradereviews',
         ];
         $useridlist->add_from_sql($sql, $params);
     }
@@ -112,7 +112,7 @@ class provider implements metadata_provider, assignsubmission_provider {
      *
      * @param assign_plugin_request_data $requestdata Request data info.
      */
-    public static function _export_submission_user_data(assign_plugin_request_data $requestdata) {
+    public static function export_submission_user_data(assign_plugin_request_data $requestdata) {
         $component = 'assignsubmission_gradereviews';
         $commentarea = 'submission_gradereviews';
         $submission = $requestdata->get_pluginobject();
@@ -138,7 +138,7 @@ class provider implements metadata_provider, assignsubmission_provider {
      *
      * @param assign_plugin_request_data $requestdata Request data info.
      */
-    public static function _delete_submission_for_context(assign_plugin_request_data $requestdata) {
+    public static function delete_submission_for_context(assign_plugin_request_data $requestdata) {
         comments_provider::delete_comments_for_all_users(
             $requestdata->get_context(),
             'assignsubmission_gradereviews',
@@ -151,7 +151,7 @@ class provider implements metadata_provider, assignsubmission_provider {
      *
      * @param assign_plugin_request_data $requestdata Request data info.
      */
-    public static function _delete_submission_for_userid(assign_plugin_request_data $requestdata) {
+    public static function delete_submission_for_userid(assign_plugin_request_data $requestdata) {
         $submission = $requestdata->get_pluginobject();
         comments_provider::delete_comments_for_all_users_select(
             $requestdata->get_context(),

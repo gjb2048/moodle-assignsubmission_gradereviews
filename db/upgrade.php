@@ -56,16 +56,15 @@ function xmldb_assignsubmission_gradereviews_upgrade($oldversion) {
     if ($oldversion < 2016042206) {
 
         // Update all capability to new one.
-        $oldcap = $DB->get_record('capabilities', array('name' => 'moodle/site:canreviewgrade'));
+        $oldcap = $DB->get_record('capabilities', ['name' => 'moodle/site:canreviewgrade']);
         $oldcap->name = 'assign/submission:canreviewgrade';
         $oldcap->component = 'assignsubmission_gradereviews';
         $DB->update_record('capabilities', $oldcap);
 
-        $oldcap = $DB->get_record('capabilities', array('name' => 'moodle/site:caneditreviewgrade'));
+        $oldcap = $DB->get_record('capabilities', ['name' => 'moodle/site:caneditreviewgrade']);
         $oldcap->name = 'assign/submission:caneditreviewgrade';
         $oldcap->component = 'assignsubmission_gradereviews';
         $DB->update_record('capabilities', $oldcap);
-
 
         // Assign submission savepoint reached.
         upgrade_plugin_savepoint(true, 2016042206, 'assignsubmission', 'gradereviews');
@@ -74,7 +73,7 @@ function xmldb_assignsubmission_gradereviews_upgrade($oldversion) {
     if ($oldversion < 2016042207) {
 
         // Update all role_capability to new one.
-        $oldcaps = $DB->get_records('role_capabilities', array('capability' => 'moodle/site:canreviewgrade'));
+        $oldcaps = $DB->get_records('role_capabilities', ['capability' => 'moodle/site:canreviewgrade']);
         if (!empty($oldcaps)) {
             foreach ($oldcaps as $oldcap) {
                 $oldcap->capability = 'assign/submission:canreviewgrade';
@@ -82,7 +81,7 @@ function xmldb_assignsubmission_gradereviews_upgrade($oldversion) {
             }
         }
 
-        $oldeditcaps = $DB->get_records('role_capabilities', array('capability' => 'moodle/site:caneditreviewgrade'));
+        $oldeditcaps = $DB->get_records('role_capabilities', ['capability' => 'moodle/site:caneditreviewgrade']);
         if (!empty($oldeditcaps)) {
             foreach ($oldeditcaps as $oldcap) {
                 $oldcap->capability = 'assign/submission:caneditreviewgrade';

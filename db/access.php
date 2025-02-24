@@ -22,20 +22,22 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$capabilities = array(
-    'assign/submission:canreviewgrade' => array(
+defined('MOODLE_INTERNAL') || die();
+
+$capabilities = [
+    'assign/submission:canreviewgrade' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_USER,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'assign/submission:caneditreviewgrade' => array(
+            'editingteacher' => CAP_ALLOW,
+        ],
+    ],
+    'assign/submission:caneditreviewgrade' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_USER,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        )
-    )
-);
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+];

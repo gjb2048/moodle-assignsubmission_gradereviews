@@ -21,7 +21,6 @@
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
 
 /**
  *
@@ -37,7 +36,7 @@ function assignsubmission_gradereviews_comment_validate(stdClass $options) {
             $options->commentarea != 'submission_gradereviews_upgrade') {
         throw new comment_exception('invalidcommentarea');
     }
-    if (!$submission = $DB->get_record('assign_submission', array('id' => $options->itemid))) {
+    if (!$submission = $DB->get_record('assign_submission', ['id' => $options->itemid])) {
         throw new comment_exception('invalidgradereviewitemid');
     }
     $context = $options->context;
@@ -77,7 +76,7 @@ function assignsubmission_gradereviews_comment_permissions(stdClass $options) {
             $options->commentarea != 'submission_gradereviews_upgrade') {
         throw new comment_exception('invalidcommentarea');
     }
-    if (!$submission = $DB->get_record('assign_submission', array('id' => $options->itemid))) {
+    if (!$submission = $DB->get_record('assign_submission', ['id' => $options->itemid])) {
         throw new comment_exception('invalidgradereviewitemid');
     }
     $context = $options->context;
@@ -94,15 +93,15 @@ function assignsubmission_gradereviews_comment_permissions(stdClass $options) {
 
     if ($assignment->get_instance()->teamsubmission &&
         !$assignment->can_view_group_submission($submission->groupid)) {
-        return array('post' => false, 'view' => false);
+        return ['post' => false, 'view' => false];
     }
 
     if (!$assignment->get_instance()->teamsubmission &&
         !$assignment->can_view_submission($submission->userid)) {
-        return array('post' => false, 'view' => false);
+        return ['post' => false, 'view' => false];
     }
 
-    return array('post' => true, 'view' => true);
+    return ['post' => true, 'view' => true];
 }
 
 /**
@@ -120,7 +119,7 @@ function assignsubmission_gradereviews_comment_display($gradereviews, $options) 
         $options->commentarea != 'submission_gradereviews_upgrade') {
         throw new comment_exception('invalidcommentarea');
     }
-    if (!$submission = $DB->get_record('assign_submission', array('id' => $options->itemid))) {
+    if (!$submission = $DB->get_record('assign_submission', ['id' => $options->itemid])) {
         throw new comment_exception('invalidgradereviewitemid');
     }
     $context = $options->context;
@@ -178,14 +177,14 @@ function assignsubmission_gradereviews_comment_display($gradereviews, $options) 
                     $usermappings[$gradereview->userid] = new stdClass();
                     $usermappings[$gradereview->userid]->fullname = fullname($gradereviewer);
                     $usermappings[$gradereview->userid]->avatar = $assignment->get_renderer()->user_picture($gradereviewer,
-                            array('size' => 18, 'link' => false));
+                            ['size' => 18, 'link' => false]);
                 }
 
-                // Commenting these three next lines, the grade reviewer name should not be hidden even in blind marking.
-                // Set blind-marking information for this comment.
-                //$gradereview->fullname = $usermappings[$comment->userid]->fullname;
-                //$gradereview->avatar = $usermappings[$comment->userid]->avatar;
-                //$gradereview->profileurl = null;
+                /* Commenting these three next lines, the grade reviewer name should not be hidden even in blind marking.
+                   Set blind-marking information for this comment.
+                   $gradereview->fullname = $usermappings[$comment->userid]->fullname;
+                   $gradereview->avatar = $usermappings[$comment->userid]->avatar;
+                   $gradereview->profileurl = null; */
             }
         }
     }
@@ -216,7 +215,7 @@ function assignsubmission_gradereviews_comment_add(stdClass $gradereview, stdCla
     global $DB;
     if ($gradereview->commentarea == 'submission_gradereviews_upgrade') {
         $submissionid = $gradereview->itemid;
-        $submission = $DB->get_record('assign_submission', array('id' => $submissionid));
+        $submission = $DB->get_record('assign_submission', ['id' => $submissionid]);
 
         $gradereview->userid = $submission->userid;
         $gradereview->commentarea = 'submission_gradereviews';

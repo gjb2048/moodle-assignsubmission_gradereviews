@@ -24,21 +24,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-global $CFG, $DB;
+namespace assignsubmission_gradereviews;
 
-require_once($CFG->dirroot . '/mod/assign/tests/privacy_test.php');
-
-use core_privacy\tests\provider_testcase;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\metadata\types\subsystem_link;
 use core_privacy\local\request\contextlist;
-// use core_privacy\local\request\approved_contextlist;
-// use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 use mod_assign\privacy\assign_plugin_request_data;
 use mod_assign\privacy\useridlist;
 use assignsubmission_gradereviews\privacy\provider;
+use stdClass;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG, $DB;
 
 /**
  * Data provider testcase class.
@@ -49,13 +48,12 @@ use assignsubmission_gradereviews\privacy\provider;
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class assignsubmission_gradereviews_privacy_testcase extends provider_testcase {
+class privacy_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Setup.
      */
-    public function setUp() {
-        parent::setUp();
+    public function set_up() {
         $this->resetAfterTest();
     }
 
@@ -73,7 +71,7 @@ class assignsubmission_gradereviews_privacy_testcase extends provider_testcase {
     protected function create_submission($assign, $user, $submissiontext, $attemptnumber = 0) {
         $submission = $assign->get_user_submission($user->id, true, $attemptnumber);
         $submission->onlinetext_editor = ['text' => $submissiontext,
-                                         'format' => FORMAT_MOODLE];
+            'format' => FORMAT_MOODLE];
 
         $this->setUser($user);
         $notices = [];
@@ -108,6 +106,9 @@ class assignsubmission_gradereviews_privacy_testcase extends provider_testcase {
      * @return array With plugin, submission and comment.
      */
     protected function create_comment($assign, $submission, $message) {
+        global $CFG;
+        require_once($CFG->dirroot . '/comment/lib.php');
+
         $plugin = $assign->get_submission_plugin_by_type('comments');
 
         $options = new stdClass();
@@ -119,7 +120,7 @@ class assignsubmission_gradereviews_privacy_testcase extends provider_testcase {
         $options->showcount = true;
         $options->displaycancel = true;
 
-        $comment = new comment($options);
+        $comment = new \comment($options);
         $comment->set_post_permission(true);
         $comment->add($message);
 
@@ -511,5 +512,4 @@ class assignsubmission_gradereviews_privacy_testcase extends provider_testcase {
             $this->assertContains($id, $expectedids);
         }
     }
-
 }

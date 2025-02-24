@@ -23,7 +23,6 @@
  */
 
 namespace assignsubmission_gradereviews\event;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * The assignsubmission_gradereviews gradereview deleted event.
@@ -40,7 +39,7 @@ class gradereview_deleted extends \core\event\comment_deleted {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/assign/view.php', array('id' => $this->contextinstanceid));
+        return new \moodle_url('/mod/assign/view.php', ['id' => $this->contextinstanceid]);
     }
 
     /**

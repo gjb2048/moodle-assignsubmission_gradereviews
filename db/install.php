@@ -23,9 +23,6 @@
  */
 
 
-defined('MOODLE_INTERNAL') || die();
-
-
 /**
  * Code run after the module database tables have been created.
  * Moves the gradereviews plugin to the bottom
