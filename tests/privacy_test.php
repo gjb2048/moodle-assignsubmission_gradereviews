@@ -51,13 +51,6 @@ global $CFG, $DB;
 class privacy_test extends \core_privacy\tests\provider_testcase {
 
     /**
-     * Setup.
-     */
-    public function set_up() {
-        $this->resetAfterTest();
-    }
-
-    /**
      * Convenience method for creating a submission.
      *
      * Copied from the assignment testcase because extending it caused issues.
@@ -225,6 +218,7 @@ class privacy_test extends \core_privacy\tests\provider_testcase {
      * Test get student user IDs.
      */
     public function test_get_student_user_ids() {
+        $this->resetAfterTest();
         $dg = $this->getDataGenerator();
 
         $c1 = $dg->create_course();
@@ -292,6 +286,7 @@ class privacy_test extends \core_privacy\tests\provider_testcase {
      * Test exporting data.
      */
     public function test_export_submission_user_data() {
+        $this->resetAfterTest();
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
         $u1 = $dg->create_user();
@@ -353,6 +348,7 @@ class privacy_test extends \core_privacy\tests\provider_testcase {
      */
     public function test_delete_submission_for_context() {
         global $DB;
+        $this->resetAfterTest();
 
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
@@ -399,6 +395,7 @@ class privacy_test extends \core_privacy\tests\provider_testcase {
      */
     public function test_delete_submission_for_userid() {
         global $DB;
+        $this->resetAfterTest();
 
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
