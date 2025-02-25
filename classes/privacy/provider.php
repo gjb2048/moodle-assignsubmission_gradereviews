@@ -160,7 +160,7 @@ class provider implements metadataprovider,
      *
      * @param  assign_plugin_request_data $exportdata Details about the user and context to focus the deletion.
      */
-    public static function delete_submission_for_userid(assign_plugin_request_data $requestdata) {
+    public static function delete_submission_for_userid(assign_plugin_request_data $exportdata) {
         // Create an approved context list to delete the comments.
         $contextlist = new \core_privacy\local\request\approved_contextlist($exportdata->get_user(), 'assignsubmission_gradereviews',
             [$exportdata->get_context()->id]);

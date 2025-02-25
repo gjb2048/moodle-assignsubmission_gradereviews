@@ -75,6 +75,7 @@ final class events_test extends \advanced_testcase {
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
+        $this->setUser($manager);
         $comment->add('New gradereview');
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -113,6 +114,7 @@ final class events_test extends \advanced_testcase {
         $options->showcount = true;
         $options->displaycancel = true;
         $gradereview = new \comment($options);
+        $this->setUser($manager);
         $newgradereview = $gradereview->add('New comment 1');
 
         // Triggering and capturing the event.
