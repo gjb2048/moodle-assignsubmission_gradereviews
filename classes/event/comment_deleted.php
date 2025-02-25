@@ -32,7 +32,7 @@ namespace assignsubmission_gradereviews\event;
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradereview_deleted extends \core\event\comment_deleted {
+class comment_deleted extends \core\event\comment_deleted {
     /**
      * Get URL related to the action.
      *

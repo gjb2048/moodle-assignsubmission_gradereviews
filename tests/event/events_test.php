@@ -83,7 +83,7 @@ final class events_test extends \advanced_testcase {
         $sink->close();
 
         // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\assignsubmission_gradereviews\event\gradereview_created', $event);
+        $this->assertInstanceOf('\assignsubmission_gradereviews\event\comment_created', $event);
         $this->assertEquals($context, $event->get_context());
         $url = new \moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id));
         $this->assertEquals($url, $event->get_url());
@@ -125,7 +125,7 @@ final class events_test extends \advanced_testcase {
         $event = reset($events);
 
         // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\assignsubmission_gradereviews\event\gradereview_deleted', $event);
+        $this->assertInstanceOf('\assignsubmission_gradereviews\event\comment_deleted', $event);
         $this->assertEquals($context, $event->get_context());
         $url = new \moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id));
         $this->assertEquals($url, $event->get_url());
