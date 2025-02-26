@@ -165,7 +165,6 @@ class provider implements metadataprovider,
         $contextlist = new \core_privacy\local\request\approved_contextlist($exportdata->get_user(), 'assignsubmission_gradereviews',
             [$exportdata->get_context()->id]);
         comments_provider::delete_comments_for_user($contextlist, 'assignsubmission_gradereviews', 'submission_gradereviews');
-        $submission = $requestdata->get_pluginobject();
     }
 
     /**

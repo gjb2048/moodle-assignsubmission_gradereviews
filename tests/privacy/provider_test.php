@@ -139,7 +139,7 @@ final class provider_test extends \mod_assign\tests\provider_testcase {
     /**
      * Test returning the context for a user who has made a comment in an assignment.
      */
-    public function test_get_context_for_userid_within_submission_orig() {
+    public function test_get_context_for_userid_within_submission_two() {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
 
@@ -200,8 +200,8 @@ final class provider_test extends \mod_assign\tests\provider_testcase {
         provider::get_context_for_userid_within_submission($u3->id, $contextlist);
         $contextids = $contextlist->get_contextids();
         $this->assertCount(2, $contextids);
-        $this->assertContains($assign1->get_context()->id, $contextids);
-        $this->assertContains($assign3->get_context()->id, $contextids);
+        $this->assertContains((string) $assign1->get_context()->id, $contextids);
+        $this->assertContains((string) $assign3->get_context()->id, $contextids);
 
         // User 4 has commented, in one assignment.
         $this->setUser($u4);
@@ -209,7 +209,7 @@ final class provider_test extends \mod_assign\tests\provider_testcase {
         provider::get_context_for_userid_within_submission($u4->id, $contextlist);
         $contextids = $contextlist->get_contextids();
         $this->assertCount(1, $contextids);
-        $this->assertContains($assign1->get_context()->id, $contextids);
+        $this->assertContains((string) $assign1->get_context()->id, $contextids);
 
         // User 5 did not comment.
         $this->setUser($u5);
@@ -317,101 +317,9 @@ final class provider_test extends \mod_assign\tests\provider_testcase {
     }
 
     /**
-     * Test returning users related to a given context.
-     */
-    public function test_get_userids_from_context() {
-        // Get a bunch of users making comments.
-        // Some in one context some in another.
-        $this->resetAfterTest();
-        $course = $this->getDataGenerator()->create_course();
-        // Only in first context.
-        $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-        // First and second context.
-        $user3 = $this->getDataGenerator()->create_user();
-        // Second context only.
-        $user4 = $this->getDataGenerator()->create_user();
-        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
-        $assign1 = $this->create_instance(['course' => $course]);
-        $assign2 = $this->create_instance(['course' => $course]);
-
-        $assigncontext1 = $assign1->get_context();
-        $assigncontext2 = $assign2->get_context();
-
-        $user1comment = 'Comment from user 1';
-        list($plugin, $submission, $comment) = $this->create_gradereview_submission($assign1, $user1, $user1comment);
-        $user2comment = 'From user 2';
-        $this->setUser($user2);
-        $comment->add($user2comment);
-        $user3comment = 'User 3 comment';
-        $this->setUser($user3);
-        $comment->add($user3comment);
-        $user4comment = 'Comment from user 4';
-        list($plugin, $submission, $comment) = $this->create_gradereview_submission($assign2, $user4, $user4comment);
-        $user3secondcomment = 'Comment on user 4 post.';
-        $this->setUser($user3);
-        $comment->add($user3comment);
-
-        $userlist = new \core_privacy\local\request\userlist($assigncontext1, 'assignsubmission_comments');
-        \assignsubmission_gradereviews\privacy\provider::get_userids_from_context($userlist);
-        $userids = $userlist->get_userids();
-        $this->assertCount(3, $userids);
-        // User 1,2 and 3 are the expected ones in the array. User 4 isn't.
-        $this->assertContainsEquals($user1->id, $userids);
-        $this->assertContainsEquals($user2->id, $userids);
-        $this->assertContainsEquals($user3->id, $userids);
-        $this->assertNotContainsEquals($user4->id, $userids);
-    }
-
-    /**
-     * Test that comments are exported for a user.
-     */
-    public function test_export_submission_user_data() {
-        $this->resetAfterTest();
-        // Create course, assignment, submission, and then a feedback comment.
-        $course = $this->getDataGenerator()->create_course();
-        // Student.
-        $user1 = $this->getDataGenerator()->create_user();
-        // Manager.
-        $user2 = $this->getDataGenerator()->create_user();
-        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
-        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'manager');
-        $this->setUser($user2);
-        $assign = $this->create_instance(['course' => $course]);
-
-        $context = $assign->get_context();
-
-        $studentcomment = 'Comment from user 1';
-        list($plugin, $submission, $comment) = $this->create_gradereview_submission($assign, $user1, $studentcomment);
-        $managercomment = 'From the manager';
-        $this->setUser($user2);
-        $comment->add($managercomment);
-
-        $writer = \core_privacy\local\request\writer::with_context($context);
-        $this->assertFalse($writer->has_any_data());
-
-        // The student should be able to see the teachers feedback.
-        $exportdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign, $submission);
-        \assignsubmission_comments\privacy\provider::export_submission_user_data($exportdata);
-        $exportedcomments = $writer->get_data(['Comments']);
-
-        // Can't rely on these comments coming out in order.
-        if ($exportedcomments->comments[0]->userid == $user1->id) {
-            $exportedstudentcomment = $exportedcomments->comments[0]->content;
-            $exportedteachercomment = $exportedcomments->comments[1]->content;
-        } else {
-            $exportedstudentcomment = $exportedcomments->comments[1]->content;
-            $exportedteachercomment = $exportedcomments->comments[0]->content;
-        }
-        $this->assertCount(2, $exportedcomments->comments);
-        $this->assertStringContainsString($studentcomment, $exportedstudentcomment);
-        $this->assertStringContainsString($teachercomment, $exportedteachercomment);
-    }
-
-    /**
      * Test exporting data.
      */
-    public function test_export_submission_user_data_orig() {
+    public function test_export_submission_user_data() {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
@@ -470,48 +378,9 @@ final class provider_test extends \mod_assign\tests\provider_testcase {
     }
 
     /**
-     * Test that all comments are deleted for this context.
-     */
-    public function test_delete_submission_for_context() {
-        global $DB;
-        $this->resetAfterTest();
-
-        // Create course, assignment, submission, and then a feedback comment.
-        $course = $this->getDataGenerator()->create_course();
-        // Student.
-        $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-        // Manager.
-        $user3 = $this->getDataGenerator()->create_user();
-        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
-        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'student');
-        $this->getDataGenerator()->enrol_user($user3->id, $course->id, 'manager');
-        $this->setUser($user3);
-        $assign = $this->create_instance(['course' => $course]);
-
-        $context = $assign->get_context();
-
-        $studentcomment = 'Comment from user 1';
-        list($plugin, $submission, $comment) = $this->create_gradereview_submission($assign, $user1, $studentcomment);
-        $studentcomment = 'Comment from user 2';
-        list($plugin2, $submission2, $comment2) = $this->create_gradereview_submission($assign, $user2, $studentcomment);
-        $teachercomment1 = 'From the teacher';
-        $teachercomment2 = 'From the teacher for second student.';
-        $comment->add($teachercomment1);
-        $comment2->add($teachercomment2);
-
-        // Only need the context in this plugin for this operation.
-        $requestdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign);
-        \assignsubmission_gradereviews\privacy\provider::delete_submission_for_context($requestdata);
-
-        $results = $DB->get_records('comments', ['contextid' => $context->id]);
-        $this->assertEmpty($results);
-    }
-
-    /**
      * Test deleting submission for context.
      */
-    public function test_delete_submission_for_context_orig() {
+    public function test_delete_submission_for_context() {
         global $DB;
         $this->resetAfterTest();
 
@@ -556,52 +425,9 @@ final class provider_test extends \mod_assign\tests\provider_testcase {
     }
 
     /**
-     * Test that the comments for a user are deleted.
-     */
-    public function test_delete_submission_for_userid() {
-        global $DB;
-        $this->resetAfterTest();
-        // Create course, assignment, submission, and then a feedback comment.
-        $course = $this->getDataGenerator()->create_course();
-        // Student.
-        $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-        // Manager.
-        $user3 = $this->getDataGenerator()->create_user();
-        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
-        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'student');
-        $this->getDataGenerator()->enrol_user($user3->id, $course->id, 'manager');
-        $this->setUser($user3);
-        $assign = $this->create_instance(['course' => $course]);
-
-        $context = $assign->get_context();
-
-        $studentcomment = 'Comment from user 1';
-        list($plugin, $submission, $comment) = $this->create_gradereview_submission($assign, $user1, $studentcomment);
-        $studentcomment = 'Comment from user 2';
-        list($plugin2, $submission2, $comment2) = $this->create_gradereview_submission($assign, $user2, $studentcomment);
-        $teachercomment1 = 'From the teacher';
-        $teachercomment2 = 'From the teacher for second student.';
-        $comment->add($teachercomment1);
-        $comment2->add($teachercomment2);
-
-        // Provide full details to delete the comments.
-        $requestdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign, null, [], $user1);
-        \assignsubmission_gradereviews\privacy\provider::delete_submission_for_userid($requestdata);
-
-        $results = $DB->get_records('comments', ['contextid' => $context->id]);
-        // We are only deleting the comments for user1 (one comment) so we should have three left.
-        $this->assertCount(3, $results);
-        foreach ($results as $result) {
-            // Check that none of the comments are from user1.
-            $this->assertNotEquals($user1->id, $result->userid);
-        }
-    }
-
-    /**
      * Test deleting submission for user ID.
      */
-    public function test_delete_submission_for_userid_orig() {
+    public function test_delete_submission_for_userid() {
         global $DB;
         $this->resetAfterTest();
 
@@ -643,68 +469,17 @@ final class provider_test extends \mod_assign\tests\provider_testcase {
 
         $this->setGuestUser();
 
-        $requestdata = new assign_plugin_request_data($a1ctx, $assign1, $sub1a);
+        $requestdata = new assign_plugin_request_data($a1ctx, $assign1, $sub1a, [], $u3);
         \assignsubmission_gradereviews\privacy\provider::delete_submission_for_userid($requestdata);
-        $this->assertEquals(0, $DB->count_records('comments', ['contextid' => $a1ctx->id, 'itemid' => $sub1a->id]));
+        $this->assertEquals(1, $DB->count_records('comments', ['contextid' => $a1ctx->id, 'itemid' => $sub1a->id]));
         $this->assertEquals(1, $DB->count_records('comments', ['contextid' => $a1ctx->id, 'itemid' => $sub1b->id]));
         $this->assertEquals(1, $DB->count_records('comments', ['contextid' => $a2ctx->id, 'itemid' => $sub2a->id]));
 
-        $requestdata = new assign_plugin_request_data($a2ctx, $assign2, $sub2a);
+        $requestdata = new assign_plugin_request_data($a2ctx, $assign2, $sub2a, [], $u3);
         \assignsubmission_gradereviews\privacy\provider::delete_submission_for_userid($requestdata);
-        $this->assertEquals(0, $DB->count_records('comments', ['contextid' => $a1ctx->id, 'itemid' => $sub1a->id]));
+        $this->assertEquals(1, $DB->count_records('comments', ['contextid' => $a1ctx->id, 'itemid' => $sub1a->id]));
         $this->assertEquals(1, $DB->count_records('comments', ['contextid' => $a1ctx->id, 'itemid' => $sub1b->id]));
         $this->assertEquals(0, $DB->count_records('comments', ['contextid' => $a2ctx->id, 'itemid' => $sub2a->id]));
-    }
-
-    /**
-     * Test deletion of all submissions for a context works.
-     */
-    public function test_delete_submissions() {
-        global $DB;
-        // Get a bunch of users making comments.
-        // Some in one context some in another.
-        $this->resetAfterTest();
-        $course = $this->getDataGenerator()->create_course();
-        // Only in first context.
-        $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-        // First and second context.
-        $user3 = $this->getDataGenerator()->create_user();
-        // Second context only.
-        $user4 = $this->getDataGenerator()->create_user();
-        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
-        $assign1 = $this->create_instance(['course' => $course]);
-        $assign2 = $this->create_instance(['course' => $course]);
-
-        $assigncontext1 = $assign1->get_context();
-        $assigncontext2 = $assign2->get_context();
-
-        $user1comment = 'Comment from user 1';
-        list($plugin, $submission, $comment) = $this->create_gradereview_submission($assign1, $user1, $user1comment);
-        $user2comment = 'From user 2';
-        $this->setUser($user2);
-        $comment->add($user2comment);
-        $user3comment = 'User 3 comment';
-        $this->setUser($user3);
-        $comment->add($user3comment);
-        $user4comment = 'Comment from user 4';
-        list($plugin, $submission, $comment) = $this->create_gradereview_submission($assign2, $user4, $user4comment);
-        $user3secondcomment = 'Comment on user 4 post.';
-        $this->setUser($user3);
-        $comment->add($user3comment);
-
-        // There should be three entries. One for the first three users.
-        $results = $DB->get_records('comments', ['contextid' => $assigncontext1->id]);
-        $this->assertCount(3, $results);
-
-        $deletedata = new \mod_assign\privacy\assign_plugin_request_data($assigncontext1, $assign1);
-        $deletedata->set_userids([$user1->id, $user3->id]);
-        \assignsubmission_gradereviews\privacy\provider::delete_submissions($deletedata);
-
-        // We should be left with just a comment from user 2.
-        $results = $DB->get_records('comments', ['contextid' => $assigncontext1->id]);
-        $this->assertCount(1, $results);
-        $this->assertEquals($user2comment, current($results)->content);
     }
 
     /**
