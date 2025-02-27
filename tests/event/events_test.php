@@ -50,7 +50,7 @@ final class events_test extends \advanced_testcase {
     /**
      * Test comment_created event.
      */
-    public function test_comment_created() {
+    public function test_comment_created(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $manager = $this->getDataGenerator()->create_and_enrol($course, 'manager');
@@ -85,7 +85,7 @@ final class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\assignsubmission_gradereviews\event\comment_created', $event);
         $this->assertEquals($context, $event->get_context());
-        $url = new \moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id));
+        $url = new \moodle_url('/mod/assign/view.php', ['id' => $assign->get_course_module()->id]);
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
     }
@@ -93,7 +93,7 @@ final class events_test extends \advanced_testcase {
     /**
      * Test comment_deleted event.
      */
-    public function test_comment_deleted() {
+    public function test_comment_deleted(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $manager = $this->getDataGenerator()->create_and_enrol($course, 'manager');
@@ -127,7 +127,7 @@ final class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\assignsubmission_gradereviews\event\comment_deleted', $event);
         $this->assertEquals($context, $event->get_context());
-        $url = new \moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id));
+        $url = new \moodle_url('/mod/assign/view.php', ['id' => $assign->get_course_module()->id]);
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
     }

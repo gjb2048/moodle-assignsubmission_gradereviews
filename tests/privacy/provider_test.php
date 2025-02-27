@@ -101,7 +101,7 @@ final class provider_test extends \mod_assign\tests\provider_testcase {
     /**
      * Quick test to make sure that get_metadata returns something.
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new \core_privacy\local\metadata\collection('assignsubmission_gradereviews');
         $collection = \assignsubmission_gradereviews\privacy\provider::get_metadata($collection);
         $this->assertNotEmpty($collection);
@@ -110,7 +110,7 @@ final class provider_test extends \mod_assign\tests\provider_testcase {
     /**
      * Test returning the context for a user who has made a comment in an assignment.
      */
-    public function test_get_context_for_userid_within_submission() {
+    public function test_get_context_for_userid_within_submission(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission, and then a feedback comment.
         $course = $this->getDataGenerator()->create_course();
@@ -139,7 +139,7 @@ final class provider_test extends \mod_assign\tests\provider_testcase {
     /**
      * Test returning the context for a user who has made a comment in an assignment.
      */
-    public function test_get_context_for_userid_within_submission_two() {
+    public function test_get_context_for_userid_within_submission_two(): void {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
 
@@ -222,7 +222,7 @@ final class provider_test extends \mod_assign\tests\provider_testcase {
     /**
      * Test returning student ids given a user ID.
      */
-    public function test_get_student_user_ids() {
+    public function test_get_student_user_ids(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission, and then a feedback comment.
         $course = $this->getDataGenerator()->create_course();
@@ -251,7 +251,7 @@ final class provider_test extends \mod_assign\tests\provider_testcase {
     /**
      * Test get student user IDs.
      */
-    public function test_get_student_user_ids_orig() {
+    public function test_get_student_user_ids_orig(): void {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
 
@@ -319,7 +319,7 @@ final class provider_test extends \mod_assign\tests\provider_testcase {
     /**
      * Test exporting data.
      */
-    public function test_export_submission_user_data() {
+    public function test_export_submission_user_data(): void {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
@@ -380,7 +380,7 @@ final class provider_test extends \mod_assign\tests\provider_testcase {
     /**
      * Test deleting submission for context.
      */
-    public function test_delete_submission_for_context() {
+    public function test_delete_submission_for_context(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -427,7 +427,7 @@ final class provider_test extends \mod_assign\tests\provider_testcase {
     /**
      * Test deleting submission for user ID.
      */
-    public function test_delete_submission_for_userid() {
+    public function test_delete_submission_for_userid(): void {
         global $DB;
         $this->resetAfterTest();
 

@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['assign/submission:caneditreviewgrade'] = 'Can delete review grade comments.';
+$string['assign/submission:canreviewgrade'] = 'Can review grade.';
 $string['blindmarkingname'] = 'Participant {$a}';
 $string['blindmarkingviewfullname'] = 'Participant {$a->participantnumber} ({$a->participantfullname})';
 $string['commentlinktext'] = 'Grade review';
@@ -32,5 +34,3 @@ $string['enabled_help'] = 'If enabled, students can leave gradereviews on their 
 ';
 $string['pluginname'] = 'Grade reviews';
 $string['privacy:metadata:commentpurpose'] = 'Records comments made against a submission';
-$string['assign/submission:caneditreviewgrade'] = 'Can delete review grade comments.';
-$string['assign/submission:canreviewgrade'] = 'Can review grade.';
