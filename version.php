@@ -18,7 +18,7 @@
  * This file contains the version information for the gradereviews submission plugin
  *
  * @package    assignsubmission_gradereviews
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @copyright  2012 NetSpot {@link http://www.netspot.com.au}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
